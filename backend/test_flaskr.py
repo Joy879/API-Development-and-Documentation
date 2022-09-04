@@ -17,7 +17,11 @@ class TriviaTestCase(unittest.TestCase):
         self.database_name = TEST_DB_NAME
         self.database_account = DB_USER
         self.database_password = DB_PASSWORD
-        self.database_path = "postgresql://{}:{}@{}/{}".format(self.database_account, self.database_password, 'localhost:5432', self.database_name)
+        self.database_path = "postgresql://{}:{}@{}/{}".format(
+            self.database_account,
+            self.database_password,
+            'localhost:5432',
+            self.database_name)
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context
@@ -32,8 +36,8 @@ class TriviaTestCase(unittest.TestCase):
         pass
 
     """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
+    Writing at least one test for each test
+    for successful operation and for expected errors.
     """
     def test_get_questions(self):
         res = self.client().get("/questions")
@@ -45,16 +49,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(len(data["questions"]))
 
 # Failure question
-    def fail_questions_put(self):
+    def test_fail_questions_put(self):
         res = self.client().put('/questions')
 
         self.assertEqual(res.status_code, 405)
 
-    def fail_questions_delete(self):
+    def test_fail_questions_delete(self):
         res = self.client().delete('/questions')
         self.assertEqual(res.status_code, 405)
 
-    def fail_questions_patch(self):
+    def test_fail_questions_patch(self):
         res = self.client().patch('/questions')
         self.assertEqual(res.status_code, 405)
 
@@ -66,19 +70,19 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
 
     # Failure category
-    def fail_category_post(self):
+    def test_fail_category_post(self):
         res = self.client().post('/categories')
         self.assertEqual(res.status_code, 405)
 
-    def fail_category_put(self):
+    def test_fail_category_put(self):
         res = self.client().put('/categories')
         self.assertEqual(res.status_code, 405)
 
-    def fail_category_post_delete(self):
+    def test_fail_category_post_delete(self):
         res = self.client().delete('/categories')
         self.assertEqual(res.status_code, 405)
 
-    def fail_category_post_patch(self):
+    def test_fail_category_post_patch(self):
         res = self.client().patch('/categories')
         self.assertEqual(res.status_code, 405)
 
@@ -92,7 +96,7 @@ class TriviaTestCase(unittest.TestCase):
 
     # Delete a different question in each attempt
     def test_delete_question(self):
-        res = self.client().delete("/questions/6")
+        res = self.client().delete("/questions/12")
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
@@ -110,19 +114,22 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["message"], "unprocessable")
 
     def test_search_questions(self):
-        res = self.client().post("/questions/search", json=({'searchTerm': 'new'}))
+        res = self.client().post("/questions", json=({
+            'searchTerm': 'new'}))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
 
-    def fail_to_test_search_questions(self):
+    def test_fail_to_test_search_questions(self):
         res = self.client().post("/search", json=({'searchTerm': 'new'}))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
 
     def test_quizzes(self):
-        res = self.client().post("/quizzes", json=({'previous_questions': [], 'quiz_category': {'id': '1', 'type': 'Sports'}}))
+        res = self.client().post("/quizzes", json=({
+            'previous_questions': [],
+            'quiz_category': {'id': '1', 'type': 'Sports'}}))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['question'])
